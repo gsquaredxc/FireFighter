@@ -87,8 +87,8 @@ async def on_message(message):
 @bot.event
 async def on_reaction_add(reaction,user):
     if reaction.message.author == bot.user:
-        if reaction.emoji == '🗑️':
-            if has_admin_perms(user):
+        if has_admin_perms(user):
+            if reaction.emoji == '🗑️':
                 for field in reaction.message.embeds[0].to_dict()["fields"]:
                     if field["name"] == "Message ID:":
                         messageID = int(field["value"])
@@ -96,6 +96,14 @@ async def on_reaction_add(reaction,user):
                         channelID = int(re.sub('[^0-9]','', field["value"]))
                 message = await bot.get_channel(channelID).fetch_message(messageID)
                 await message.delete()
+            elif reaction.emoji == '🔨':
+                for field in reaction.message.embeds[0].to_dict()["fields"]:
+                    if field["name"] == "Message ID:":
+                        messageID = int(field["value"])
+                    elif field["name"] == "Channel:":
+                        channelID = int(re.sub('[^0-9]', '', field["value"]))
+                message = await bot.get_channel(channelID).fetch_message(messageID)
+                await message.author.ban(reason="Caught spamming by FireFighter")
 
 
 

@@ -55,6 +55,7 @@ async def init(ctx):
 async def restart(ctx):
     if ctx.guild.id == 733383903544606800:
         if has_admin_perms(ctx.author):
+            await ctx.channel.send("Restarting!")
             sys.exit()
 
 

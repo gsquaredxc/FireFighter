@@ -1,6 +1,9 @@
 #Documentation
+
 ##Usage:
+
 do something
+
 ##Config:
 
 ###General config:
@@ -8,6 +11,16 @@ do something
 **spam_channel**
 
 The ID of the channel to send possible spam to
+
+###Actions allowed by all:
+
+**allow_delete_all**
+
+Allows spam discord to delete messages
+
+**allow_ban_all**
+
+Allows spam discord to ban spammers
 
 ###Weight for actions:
 

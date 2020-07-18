@@ -1,6 +1,8 @@
 import datetime
 import os
 
+from configUtils import get_value
+
 DEBUG = os.getenv("DEBUG") == "1"
 
 import config
@@ -32,16 +34,14 @@ def user_weight(message) -> int:
 def ping_counter(message) -> int:
     mentions = len(message.mentions)
     role_mentions = len(message.role_mentions)
-    if mentions >= config.Config[str(message.guild.id)]["ping_spam_min"]:
+    if mentions >= get_value(message.guild.id,"ping_spam_min"):
         if DEBUG:
             print("PATH: PING_SPAM; MENTIONS: " + str(mentions))
-        return config.Config[str(message.guild.id)]["ping_spam_base"] + (config.Config[str(message.guild.id)][
-            "ping_spam_mult"] * mentions)
-    if role_mentions >= config.Config[str(message.guild.id)]["role_spam_min"]:
+        return get_value(message.guild.id,"ping_spam_base") + (get_value(message.guild.id,"ping_spam_mult") * mentions)
+    if role_mentions >= get_value(message.guild.id,"role_spam_min"):
         if DEBUG:
             print("PATH: ROLE_SPAM; MENTIONS: " + str(role_mentions))
-        return config.Config[str(message.guild.id)]["role_spam_base"] + (config.Config[str(message.guild.id)][
-            "role_spam_mult"] * role_mentions)
+        return get_value(message.guild.id,"role_spam_base") + (get_value(message.guild.id,"role_spam_mult") * role_mentions)
     return 0
 
 
@@ -51,8 +51,8 @@ def user_age_weight(message) -> int:
     if DEBUG:
         print("USER_AGE: " + str(difference))
     if difference == 0:
-        return config.Config[str(message.guild.id)]["user_age_0"]
-    elif difference < config.Config[str(message.guild.id)]["user_age_max"]:
-        return config.Config[str(message.guild.id)]["user_age_mult"] * (
-                config.Config[str(message.guild.id)]["user_age_max"] - difference)
+        return get_value(message.guild.id,"user_age_0")
+    elif difference < get_value(message.guild.id,"user_age_max"):
+        return get_value(message.guild.id,"user_age_mult") * (
+                get_value(message.guild.id,"user_age_max") - difference)
     return 0

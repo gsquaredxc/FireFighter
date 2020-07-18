@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 from discord.ext import commands
 
 import config as conf
+from configUtils import set_value, get_value
 from embedUtils import embedAppender
 from messageReactor import all_reactions, spam_reactions
 from messageWeight import message_weigher
@@ -27,9 +28,9 @@ bot = commands.Bot(command_prefix="%")
 async def config(ctx, arg1, arg2):
     if has_admin_perms(ctx.author):
         try:
-            conf.Config[str(ctx.guild.id)][arg1] = int(arg2)
+            set_value(ctx.guild.id,arg1,int(arg2))
         except ValueError:
-            conf.Config[str(ctx.guild.id)][arg1] = arg2
+            set_value(ctx.guild.id,arg1,arg2)
 
 
 @bot.command()
@@ -62,7 +63,7 @@ async def on_ready():
     game.type = discord.ActivityType.watching
     await bot.change_presence(status=discord.Status.online, activity=game)
     global global_channel
-    global_channel = bot.get_channel(conf.Config["baseConfig"]["spam_channel"])
+    global_channel = bot.get_channel(get_value("baseConfig","spam_channel"))
     await global_channel.send("Bot has started!")
 
 
@@ -75,8 +76,8 @@ async def on_message(message):
             conf.Config[str(message.guild.id)] = conf.Config["baseConfig"]
     else:
         weight = message_weigher(message)
-        if weight >= conf.Config[str(message.guild.id)]["report_to_all"] or weight >= \
-                conf.Config[str(message.guild.id)]["report_to_spam_channel"]:
+        if weight >= get_value(message.guild.id,"report_to_all") or weight >= \
+                get_value(message.guild.id,"report_to_spam_channel"):
             embedVar = discord.Embed(title="Suspicious message", color=0x00ff00)
             embedVar.add_field(name="Message content:", value=message.content, inline=False)
             embedVar.add_field(name="Message weight:", value=str(weight), inline=False)
@@ -86,15 +87,15 @@ async def on_message(message):
             embedVar.add_field(name="Author age:", value=message.author.created_at, inline=True)
             embedVar.add_field(name="Message ID:", value=message.id, inline=False)
             embedVar.add_field(name="Channel:", value=message.channel.mention, inline=False)
-        if weight >= conf.Config[str(message.guild.id)]["mute"]:
+        if weight >= get_value(message.guild.id,"mute"):
             embedVar.add_field(name="Actions taken:", value="Muted", inline=False)
             role = message.guild.get_role(conf.Config[str(message.guild.id)]["mute_role"])
             await message.author.add_roles(role)
-        if weight >= conf.Config[str(message.guild.id)]["report_to_all"]:
+        if weight >= get_value(message.guild.id,"report_to_all"):
             send_message = await global_channel.send(embed=embedVar)
             await all_reactions(send_message)
-        if weight >= conf.Config[str(message.guild.id)]["report_to_spam_channel"]:
-            send_message = await bot.get_channel(int(conf.Config[str(message.guild.id)]["spam_channel"])).send(
+        if weight >= get_value(message.guild.id,"report_to_spam_channel"):
+            send_message = await bot.get_channel(int(get_value(message.guild.id,"spam_channel"))).send(
                 embed=embedVar)
             await spam_reactions(send_message)
     await bot.process_commands(message)

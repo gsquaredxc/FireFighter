@@ -1,8 +1,22 @@
 # Documentation
 
-## Usage:
+## Setup:
 
-do something
+
+```shell script
+git clone https://github.com/gsquaredxc/FireFighter
+cd FireFighter
+sudo pip3 install -r requirements.txt --upgrade
+```
+
+## Run:
+
+```shell script
+git pull
+sudo pip3 install -r requirements.txt --upgrade
+python3 FireFighter.py
+```
+
 
 ## Commands:
 

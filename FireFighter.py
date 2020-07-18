@@ -56,6 +56,7 @@ async def restart(ctx):
     if ctx.guild.id == 733383903544606800:
         if has_admin_perms(ctx.author):
             await ctx.channel.send("Restarting!")
+            await global_channel.send("Bot is restarting!")
             sys.exit()
 
 
@@ -68,6 +69,7 @@ async def on_ready():
     await bot.change_presence(status=discord.Status.online, activity=game)
     global global_channel
     global_channel = bot.get_channel(conf.Config["baseConfig"]["spam_channel"])
+    await global_channel.send("Bot has started!")
 
 
 @bot.event

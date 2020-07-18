@@ -54,6 +54,10 @@ async def init(ctx):
 @bot.event
 async def on_ready():
     print('We have logged in as {0.user}'.format(bot))
+    game = discord.Activity()
+    game.name = "for spammers"
+    game.type = discord.ActivityType.watching
+    await bot.change_presence(status=discord.Status.online, activity=game)
     global global_channel
     global_channel = bot.get_channel(conf.Config["baseConfig"]["spam_channel"])
 

@@ -1,4 +1,5 @@
 import os
+import re
 
 import discord
 from dotenv import load_dotenv
@@ -6,6 +7,7 @@ from dotenv import load_dotenv
 from discord.ext import commands
 
 import config as conf
+from messageReactor import all_reactions
 from messageWeight import message_weigher
 from userPerms import has_admin_perms
 
@@ -59,6 +61,7 @@ async def on_message(message):
             conf.Config[str(message.guild.id)] = conf.Config["baseConfig"]
     else:
         weight = message_weigher(message)
+        i = 0
         if weight >= conf.Config[str(message.guild.id)]["report_to_all"] or weight >= \
                 conf.Config[str(message.guild.id)]["report_to_spam_channel"]:
             embedVar = discord.Embed(title="Suspicious message", color=0x00ff00)
@@ -68,14 +71,32 @@ async def on_message(message):
             embedVar.add_field(name="Full name:", value=str(message.author), inline=True)
             embedVar.add_field(name="ID:", value=message.author.id, inline=False)
             embedVar.add_field(name="Author age:", value=message.author.created_at, inline=True)
+            embedVar.add_field(name="Message ID:", value = message.id, inline=False)
+            embedVar.add_field(name="Channel:", value=message.channel.mention, inline=False)
         if weight >= conf.Config[str(message.guild.id)]["report_to_all"]:
-            await global_channel.send(embed=embedVar)
+            message = await global_channel.send(embed=embedVar)
+            await all_reactions(message)
         if weight >= conf.Config[str(message.guild.id)]["report_to_spam_channel"]:
-            await bot.get_channel(int(conf.Config[str(message.guild.id)]["spam_channel"])).send(embed=embedVar)
+            message = await bot.get_channel(int(conf.Config[str(message.guild.id)]["spam_channel"])).send(embed=embedVar)
+            await all_reactions(message)
         if weight >= conf.Config[str(message.guild.id)]["mute"]:
             pass  # TODO
     await bot.process_commands(message)
     return
+
+@bot.event
+async def on_reaction_add(reaction,user):
+    if reaction.message.author == bot.user:
+        if reaction.emoji == '🗑️':
+            if has_admin_perms(user):
+                for field in reaction.message.embeds[0].to_dict()["fields"]:
+                    if field["name"] == "Message ID:":
+                        messageID = int(field["value"])
+                    elif field["name"] == "Channel:":
+                        channelID = int(re.sub('[^0-9]','', field["value"]))
+                message = await bot.get_channel(channelID).fetch_message(messageID)
+                await message.delete()
+
 
 
 try:

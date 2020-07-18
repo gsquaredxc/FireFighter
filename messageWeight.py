@@ -1,6 +1,6 @@
 import discord
 
-from FireFighter import Config
+import config
 
 
 def message_weigher(message) -> int:
@@ -28,10 +28,10 @@ def ping_counter(message) -> int:
     weight = 0
     mentions = len(message.mentions)
     role_mentions = len(message.role_mentions)
-    if mentions >= Config[str(message.guild.id)]["ping_spam_min"]:
-        weight += Config[str(message.guild.id)]["ping_spam_base"] + Config[str(message.guild.id)][
+    if mentions >= config.Config[str(message.guild.id)]["ping_spam_min"]:
+        weight += config.Config[str(message.guild.id)]["ping_spam_base"] + config.Config[str(message.guild.id)][
             "ping_spam_mult"] * mentions
-    if role_mentions >= Config[str(message.guild.id)]["role_spam_min"]:
-        weight += Config[str(message.guild.id)]["role_spam_base"] + Config[str(message.guild.id)][
+    if role_mentions >= config.Config[str(message.guild.id)]["role_spam_min"]:
+        weight += config.Config[str(message.guild.id)]["role_spam_base"] + config.Config[str(message.guild.id)][
             "role_spam_mult"] * role_mentions
     return weight

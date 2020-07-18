@@ -1,0 +1,20 @@
+{
+    "baseConfig": {
+        "report_to_all": 25,
+        "report_to_spam_channel": 20,
+        "mute": 50,
+        "ping_spam_min": 3,
+        "ping_spam_base": 3,
+        "ping_spam_mult": 3,
+        "role_spam_min": 3,
+        "role_spam_base": 3,
+        "role_spam_mult": 3,
+        "user_age_0": 10,
+        "user_age_max": 5,
+        "user_age_mult": 1,
+        "allow_delete_all": true,
+        "allow_ban_all": false,
+        "mute_role": 0,
+        "spam_channel": 733890159103311933
+    }
+}

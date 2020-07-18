@@ -45,12 +45,6 @@ async def load_conf(ctx):
         print("Loading config")
         conf.save_conf()
 
-
-@bot.command()
-async def init(ctx):
-    if has_admin_perms(ctx.author):
-        conf.Config[str(ctx.guild.id)] = conf.Config["baseConfig"]
-
 @bot.command()
 async def restart(ctx):
     if ctx.guild.id == 733383903544606800:
@@ -76,6 +70,9 @@ async def on_ready():
 async def on_message(message):
     if message.author == bot.user:
         pass
+    elif message.content == "%init":
+        if has_admin_perms(message.author):
+            conf.Config[str(message.guild.id)] = conf.Config["baseConfig"]
     else:
         weight = message_weigher(message)
         if weight >= conf.Config[str(message.guild.id)]["report_to_all"] or weight >= \

@@ -73,11 +73,11 @@ async def on_message(message):
             embedVar.add_field(name="Message ID:", value = message.id, inline=False)
             embedVar.add_field(name="Channel:", value=message.channel.mention, inline=False)
         if weight >= conf.Config[str(message.guild.id)]["report_to_all"]:
-            message = await global_channel.send(embed=embedVar)
-            await all_reactions(message)
+            send_message = await global_channel.send(embed=embedVar)
+            await all_reactions(send_message)
         if weight >= conf.Config[str(message.guild.id)]["report_to_spam_channel"]:
-            message = await bot.get_channel(int(conf.Config[str(message.guild.id)]["spam_channel"])).send(embed=embedVar)
-            await spam_reactions(message)
+            send_message = await bot.get_channel(int(conf.Config[str(message.guild.id)]["spam_channel"])).send(embed=embedVar)
+            await spam_reactions(send_message)
         if weight >= conf.Config[str(message.guild.id)]["mute"]:
             pass  # TODO
     await bot.process_commands(message)
@@ -108,7 +108,7 @@ async def on_reaction_add(reaction,user):
                 member = await channel.guild.fetch_member(memberID)
                 if await check_if_can_ban(user, channel.guild):
                     await member.ban(reason="Caught spamming by FireFighter")
-                    await reaction.message.channel.send(member.mention + " banned for spamming.")
+                    await reaction.message.channel.send(member.mention + " banned for spamming. https://cdn.discordapp.com/attachments/733890159103311933/734033487845130250/shanty.mp3")
 
 
 

@@ -13,6 +13,7 @@ from userPerms import has_admin_perms, check_if_can_ban, check_if_can_delete
 
 load_dotenv()
 TOKEN = os.getenv("DISCORD_TOKEN")
+DEBUG = os.getenv("DEBUG") == "1"
 
 print("Loading config")
 conf.open_conf()
@@ -28,17 +29,20 @@ async def config(ctx, arg1, arg2):
         except ValueError:
             conf.Config[str(ctx.guild.id)][arg1] = arg2
 
+
 @bot.command()
 async def save_conf(ctx):
     if has_admin_perms(ctx.author):
         print("Saving config")
         conf.open_conf()
 
+
 @bot.command()
 async def load_conf(ctx):
     if has_admin_perms(ctx.author):
         print("Loading config")
         conf.save_conf()
+
 
 @bot.command()
 async def init(ctx):
@@ -51,6 +55,7 @@ async def on_ready():
     print('We have logged in as {0.user}'.format(bot))
     global global_channel
     global_channel = bot.get_channel(conf.Config["baseConfig"]["spam_channel"])
+
 
 @bot.event
 async def on_message(message):
@@ -70,21 +75,23 @@ async def on_message(message):
             embedVar.add_field(name="Full name:", value=str(message.author), inline=True)
             embedVar.add_field(name="ID:", value=message.author.id, inline=False)
             embedVar.add_field(name="Author age:", value=message.author.created_at, inline=True)
-            embedVar.add_field(name="Message ID:", value = message.id, inline=False)
+            embedVar.add_field(name="Message ID:", value=message.id, inline=False)
             embedVar.add_field(name="Channel:", value=message.channel.mention, inline=False)
         if weight >= conf.Config[str(message.guild.id)]["report_to_all"]:
             send_message = await global_channel.send(embed=embedVar)
             await all_reactions(send_message)
         if weight >= conf.Config[str(message.guild.id)]["report_to_spam_channel"]:
-            send_message = await bot.get_channel(int(conf.Config[str(message.guild.id)]["spam_channel"])).send(embed=embedVar)
+            send_message = await bot.get_channel(int(conf.Config[str(message.guild.id)]["spam_channel"])).send(
+                embed=embedVar)
             await spam_reactions(send_message)
         if weight >= conf.Config[str(message.guild.id)]["mute"]:
             pass  # TODO
     await bot.process_commands(message)
     return
 
+
 @bot.event
-async def on_reaction_add(reaction,user):
+async def on_reaction_add(reaction, user):
     if reaction.message.author == bot.user:
         if has_admin_perms(user):
             if reaction.emoji == '🗑️':
@@ -92,7 +99,7 @@ async def on_reaction_add(reaction,user):
                     if field["name"] == "Message ID:":
                         messageID = int(field["value"])
                     elif field["name"] == "Channel:":
-                        channelID = int(re.sub('[^0-9]','', field["value"]))
+                        channelID = int(re.sub('[^0-9]', '', field["value"]))
                 channel = bot.get_channel(channelID)
                 message = await channel.fetch_message(messageID)
                 if await check_if_can_delete(user, channel.guild):
@@ -108,8 +115,8 @@ async def on_reaction_add(reaction,user):
                 member = await channel.guild.fetch_member(memberID)
                 if await check_if_can_ban(user, channel.guild):
                     await member.ban(reason="Caught spamming by FireFighter")
-                    await reaction.message.channel.send(member.mention + " banned for spamming. https://cdn.discordapp.com/attachments/733890159103311933/734033487845130250/shanty.mp3")
-
+                    await reaction.message.channel.send(
+                        member.mention + " banned for spamming. https://cdn.discordapp.com/attachments/733890159103311933/734033487845130250/shanty.mp3")
 
 
 try:

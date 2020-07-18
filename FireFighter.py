@@ -1,5 +1,6 @@
 import os
 import re
+import sys
 
 import discord
 from dotenv import load_dotenv
@@ -50,6 +51,12 @@ async def init(ctx):
     if has_admin_perms(ctx.author):
         conf.Config[str(ctx.guild.id)] = conf.Config["baseConfig"]
 
+@bot.command()
+async def restart(ctx):
+    if ctx.guild.id == 733383903544606800:
+        if has_admin_perms(ctx.author):
+            sys.exit()
+
 
 @bot.event
 async def on_ready():
@@ -66,9 +73,6 @@ async def on_ready():
 async def on_message(message):
     if message.author == bot.user:
         pass
-    elif message.content == "%init":
-        if has_admin_perms(message.author):
-            conf.Config[str(message.guild.id)] = conf.Config["baseConfig"]
     else:
         weight = message_weigher(message)
         if weight >= conf.Config[str(message.guild.id)]["report_to_all"] or weight >= \

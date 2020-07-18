@@ -7,8 +7,11 @@ do something
 ## Commands:
 
 `%init` inits new server from base
+
 `%config a b` loads value b into a in the config file
+
 `%load_conf` loads the config file, also happens at boot
+
 `%save_conf` saves the config file, also happens at shutdown
 
 ## Config:

@@ -1,12 +1,12 @@
-#Documentation
+# Documentation
 
-##Usage:
+## Usage:
 
 do something
 
-##Config:
+## Config:
 
-###General config:
+### General config:
 
 **spam_channel**
 
@@ -16,7 +16,7 @@ The ID of the channel to send possible spam to
 
 The ID of the role to give to people so they are muted
 
-###Actions allowed by all:
+### Actions allowed by all:
 
 **allow_delete_all**
 
@@ -26,7 +26,7 @@ Allows spam discord to delete messages
 
 Allows spam discord to ban spammers
 
-###Weight for actions:
+### Weight for actions:
 
 **report_to_all**
 
@@ -40,7 +40,7 @@ The weight to report to the spam channel on your discord at
 
 The weight to mute the user spamming at
 
-###Weight to add for messages:
+### Weight to add for messages:
 
 **ping_spam_min**
 
@@ -66,7 +66,7 @@ The default weight for being caught for role ping spam
 
 The weight to add per role ping
 
-###Weight to add for users:
+### Weight to add for users:
 
 **user_age_0**
 

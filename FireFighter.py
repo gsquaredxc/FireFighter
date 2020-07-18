@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 from discord.ext import commands
 
 import config as conf
+from embedUtils import embedAppender
 from messageReactor import all_reactions, spam_reactions
 from messageWeight import message_weigher
 from userPerms import has_admin_perms, check_if_can_ban, check_if_can_delete
@@ -77,6 +78,10 @@ async def on_message(message):
             embedVar.add_field(name="Author age:", value=message.author.created_at, inline=True)
             embedVar.add_field(name="Message ID:", value=message.id, inline=False)
             embedVar.add_field(name="Channel:", value=message.channel.mention, inline=False)
+        if weight >= conf.Config[str(message.guild.id)]["mute"]:
+            embedVar.add_field(name="Actions taken:", value="Muted", inline=False)
+            role = message.guild.get_role(conf.Config[str(message.guild.id)]["mute_role"])
+            await message.author.add_roles(role)
         if weight >= conf.Config[str(message.guild.id)]["report_to_all"]:
             send_message = await global_channel.send(embed=embedVar)
             await all_reactions(send_message)
@@ -84,8 +89,6 @@ async def on_message(message):
             send_message = await bot.get_channel(int(conf.Config[str(message.guild.id)]["spam_channel"])).send(
                 embed=embedVar)
             await spam_reactions(send_message)
-        if weight >= conf.Config[str(message.guild.id)]["mute"]:
-            pass  # TODO
     await bot.process_commands(message)
     return
 
@@ -104,7 +107,7 @@ async def on_reaction_add(reaction, user):
                 message = await channel.fetch_message(messageID)
                 if await check_if_can_delete(user, channel.guild):
                     await message.delete()
-                    await reaction.message.channel.send("Message deleted.")
+                    await reaction.message.edit(embed = embedAppender(reaction.message.embeds[0],"Actions taken:", ", message deleted","Message deleted"))
             elif reaction.emoji == '🔨':
                 for field in reaction.message.embeds[0].to_dict()["fields"]:
                     if field["name"] == "ID:":
@@ -115,8 +118,7 @@ async def on_reaction_add(reaction, user):
                 member = await channel.guild.fetch_member(memberID)
                 if await check_if_can_ban(user, channel.guild):
                     await member.ban(reason="Caught spamming by FireFighter")
-                    await reaction.message.channel.send(
-                        member.mention + " banned for spamming. https://cdn.discordapp.com/attachments/733890159103311933/734033487845130250/shanty.mp3")
+                    await reaction.message.edit(embed = embedAppender(reaction.message.embeds[0],"Actions taken:", ", banned","Banned"))
 
 
 try:

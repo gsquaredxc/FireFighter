@@ -12,6 +12,10 @@ do something
 
 The ID of the channel to send possible spam to
 
+**mute_role**
+
+The ID of the role to give to people so they are muted
+
 ###Actions allowed by all:
 
 **allow_delete_all**
@@ -61,3 +65,17 @@ The default weight for being caught for role ping spam
 **role_spam_mult**
 
 The weight to add per role ping
+
+###Weight to add for users:
+
+**user_age_0**
+
+The weight to add for a user less than 1 day old
+
+**user_age_max**
+
+The maximum age that receives a penalty for being a young account
+
+**user_age_mult**
+
+What weight to give per day under the maximum age

@@ -3,40 +3,64 @@ import os
 import discord
 from dotenv import load_dotenv
 
-import config
+from discord.ext import commands
+
+import config as conf
 from messageWeight import message_weigher
 from userPerms import has_admin_perms
 
 load_dotenv()
 TOKEN = os.getenv("DISCORD_TOKEN")
 
-config.open_conf()
+print("Loading config")
+conf.open_conf()
 
-bot = discord.Client()
+bot = commands.Bot(command_prefix="%")
+
+
+@bot.command()
+async def config(ctx, arg1, arg2):
+    if has_admin_perms(ctx.author):
+        try:
+            conf.Config[str(ctx.guild.id)][arg1] = int(arg2)
+        except ValueError:
+            conf.Config[str(ctx.guild.id)][arg1] = arg2
+
+@bot.command()
+async def save_conf(ctx):
+    if has_admin_perms(ctx.author):
+        print("Saving config")
+        conf.open_conf()
+
+@bot.command()
+async def load_conf(ctx):
+    if has_admin_perms(ctx.author):
+        print("Loading config")
+        conf.save_conf()
+
+@bot.command()
+async def init(ctx):
+    if has_admin_perms(ctx.author):
+        conf.Config[str(ctx.guild.id)] = conf.Config["baseConfig"]
 
 
 @bot.event
 async def on_ready():
     print('We have logged in as {0.user}'.format(bot))
     global global_channel
-    global_channel = bot.get_channel(733897610716381256)
-
+    global_channel = bot.get_channel(conf.Config["baseConfig"]["spam_channel"])
 
 @bot.event
 async def on_message(message):
     if message.author == bot.user:
-        return
-    elif message.content == "%spam_channel":
-        if has_admin_perms(message.author):
-            config.Config[str(message.guild.id)]["spam_channel"] = message.channel.id
-        return
+        pass
     elif message.content == "%init":
         if has_admin_perms(message.author):
-            config.Config[str(message.guild.id)] = config.Config["baseConfig"]
-        return
+            conf.Config[str(message.guild.id)] = conf.Config["baseConfig"]
     else:
         weight = message_weigher(message)
-        if weight >= config.Config[str(message.guild.id)]["report_to_all"] or weight >= config.Config[str(message.guild.id)]["report_to_spam_channel"]:
+        if weight >= conf.Config[str(message.guild.id)]["report_to_all"] or weight >= \
+                conf.Config[str(message.guild.id)]["report_to_spam_channel"]:
             embedVar = discord.Embed(title="Suspicious message", color=0x00ff00)
             embedVar.add_field(name="Message content:", value=message.content, inline=False)
             embedVar.add_field(name="Message weight:", value=str(weight), inline=False)
@@ -44,18 +68,20 @@ async def on_message(message):
             embedVar.add_field(name="Full name:", value=str(message.author), inline=True)
             embedVar.add_field(name="ID:", value=message.author.id, inline=False)
             embedVar.add_field(name="Author age:", value=message.author.created_at, inline=True)
-        if weight >= config.Config[str(message.guild.id)]["report_to_all"]:
+        if weight >= conf.Config[str(message.guild.id)]["report_to_all"]:
             await global_channel.send(embed=embedVar)
-        if weight >= config.Config[str(message.guild.id)]["report_to_spam_channel"]:
-            await bot.get_channel(int(config.Config[str(message.guild.id)]["spam_channel"])).send(embed=embedVar)
-        if weight >= config.Config[str(message.guild.id)]["mute"]:
-            pass #TODO
-        return
+        if weight >= conf.Config[str(message.guild.id)]["report_to_spam_channel"]:
+            await bot.get_channel(int(conf.Config[str(message.guild.id)]["spam_channel"])).send(embed=embedVar)
+        if weight >= conf.Config[str(message.guild.id)]["mute"]:
+            pass  # TODO
+    await bot.process_commands(message)
+    return
 
 
 try:
     bot.run(TOKEN)
-except BaseException as e:  # Catches keyboard interrupt
+except KeyboardInterrupt as e:  # Catches keyboard interrupt
     print(e)
 finally:
-    config.save_conf()
+    print("Saving config")
+    conf.save_conf()

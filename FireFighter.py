@@ -1,3 +1,4 @@
+import json
 import os
 import re
 import sys
@@ -54,6 +55,16 @@ async def restart(ctx):
             await ctx.channel.send("Restarting!")
             await global_channel.send("Bot is restarting!")
             sys.exit()
+
+@bot.command()
+async def print_conf(ctx):
+    if has_admin_perms(ctx.author):
+        await ctx.channel.send(json.dumps(globalVars.gConfig.conf[str(ctx.guild.id)],indent=2))
+
+@bot.command()
+async def print_base_conf(ctx):
+    if has_admin_perms(ctx.author):
+        await ctx.channel.send(json.dumps(globalVars.gConfig.conf["baseConfig"],indent=2))
 
 
 @bot.event

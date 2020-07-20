@@ -11,10 +11,10 @@ class Config:
         try:
             with open(self.filename) as f:
                 self.conf = json.load(f)
-        except Exception as e:
+        except Exception as e: #should change this
             print(e)
             if retry:
-                with open(self.filename,"w+") as a:
+                with open(self.filename,"a+") as a:
                     json.dump(default_config, a, indent=4)
                 self.open_conf(False)
 

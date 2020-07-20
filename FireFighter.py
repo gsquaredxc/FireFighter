@@ -16,7 +16,6 @@ from userPerms import has_admin_perms, check_if_can_ban, check_if_can_delete
 
 load_dotenv()
 TOKEN = os.getenv("DISCORD_TOKEN")
-DEBUG = os.getenv("DEBUG") == "1"
 
 print("Loading config")
 

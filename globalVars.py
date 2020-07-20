@@ -1,3 +1,5 @@
+import os
+
 import discord
 
 from config import Config
@@ -8,6 +10,7 @@ userConfig = Config("users.json")
 
 VERSION = discord.__version__
 
+DEBUG = os.getenv("DEBUG") == "1"
 
 new_feature = VERSION != '1.3.4'
 

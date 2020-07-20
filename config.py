@@ -8,6 +8,7 @@ class Config:
         self.conf = {}
 
     def open_conf(self, retry=True, default_config=None):
+        self.defaultConf = default_config
         try:
             with open(self.filename) as f:
                 self.conf = json.load(f)
@@ -29,7 +30,7 @@ class Config:
             try:
                 self.conf[str(guildID)][key] = self.conf[defaultConf][key]
             except:
-                self.conf[defaultConf][key] = None
+                self.conf[defaultConf][key] = self.defaultConf[defaultConf][key]
             finally:
                 return self.conf[defaultConf][key]
 

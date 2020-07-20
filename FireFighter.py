@@ -94,8 +94,9 @@ async def on_ready():
 @bot.event
 async def on_message(message):
     if message.author == bot.user:
-        pass
-    elif message.content == "%init":
+        return
+    await bot.process_commands(message)
+    if message.content == "%init":
         if has_admin_perms(message.author):
             globalVars.gConfig.conf.Config[str(message.guild.id)] = globalVars.gConfig.conf.Config["baseConfig"]
     else:
@@ -122,7 +123,6 @@ async def on_message(message):
             send_message = await bot.get_channel(int(globalVars.gConfig.get_value(message.guild.id, "spam_channel"))).send(
                 embed=embedVar)
             await spam_reactions(send_message)
-    await bot.process_commands(message)
     return
 
 

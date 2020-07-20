@@ -22,12 +22,12 @@ class Config:
         with open(self.filename, "w") as f:
             json.dump(self.conf, f, indent=4)
 
-    def get_value(self,guildID, key):
+    def get_value(self,guildID, key,defaultConf="baseConfig"):
         try:
             return self.conf[str(guildID)][key]
         except:
-            self.conf[str(guildID)][key] = None
-            return None
+            self.conf[str(guildID)][key] = self.conf[defaultConf][key]
+            return self.conf[defaultConf][key]
 
     def set_value(self,guildID, key, value):
         self.conf[str(guildID)][key] = value

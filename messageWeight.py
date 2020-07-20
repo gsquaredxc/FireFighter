@@ -23,10 +23,13 @@ def message_weight(message) -> int:
 
 def user_weight(message) -> int:
     user_age = user_age_weight(message)
+    user_link = 0
+    if globalVars.new_feature:
+        user_link = user_link_weight(message)
     # time_since_join_weight(message)
     if DEBUG:
         print("USER_AGE_WEIGHT: " + str(user_age))
-    return user_age
+    return user_age-user_link
 
 
 def ping_counter(message) -> int:
@@ -55,3 +58,12 @@ def user_age_weight(message) -> int:
         return globalVars.gConfig.get_value(message.guild.id,"user_age_mult") * (
                 globalVars.gConfig.get_value(message.guild.id,"user_age_max") - difference)
     return 0
+
+def user_link_weight(message) -> int:
+    author = message.author
+    flags = author.public_flags
+    weight = 0
+    weight += globalVars.gConfig.get_value(message.guild.id,"user_hypesquad")*flags.hypesquad
+    weight += globalVars.gConfig.get_value(message.guild.id, "user_accounts") * len(flags.accounts)
+    weight += globalVars.gConfig.get_value(message.guild.id, "user_nitro") * flags.nitro
+    return weight

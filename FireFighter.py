@@ -44,7 +44,7 @@ async def save_conf(ctx):
 async def load_conf(ctx):
     if has_admin_perms(ctx.author):
         print("Loading config")
-        globalVars.gConfig.load_conf()
+        globalVars.gConfig.open_conf()
 
 
 @bot.command()

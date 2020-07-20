@@ -1,8 +1,15 @@
+import discord
+
 from config import Config
 
 gConfig = Config("guilds.json")
 keywordConfig = Config("keywords.json")
 userConfig = Config("users.json")
+
+VERSION = discord.__version__
+
+
+new_feature = VERSION != '1.3.4'
 
 gDefaultConf = {
     "baseConfig": {

@@ -31,6 +31,7 @@ async def config(ctx, arg1, arg2):
             globalVars.gConfig.set_value(ctx.guild.id, arg1, int(arg2))
         except ValueError:
             globalVars.gConfig.set_value(ctx.guild.id, arg1, arg2)
+        await ctx.channel.send("Local Config: Changed " + arg1 + " to " + arg2)
 
 @bot.command()
 async def base_config(ctx, arg1, arg2):
@@ -39,12 +40,14 @@ async def base_config(ctx, arg1, arg2):
             globalVars.gConfig.set_value("baseConfig", arg1, int(arg2))
         except ValueError:
             globalVars.gConfig.set_value("baseConfig", arg1, arg2)
+        await global_channel.send("Global Config: Changed " + arg1 + " to " + arg2)
 
 
 @bot.command()
 async def save_conf(ctx):
     if has_admin_perms(ctx.author):
-        print("Saving config")
+        await ctx.channel.send("Saving config!")
+        await global_channel.send("Saving config!")
         globalVars.gConfig.save_conf()
 
 
@@ -52,6 +55,8 @@ async def save_conf(ctx):
 async def load_conf(ctx):
     if has_admin_perms(ctx.author):
         print("Loading config")
+        await ctx.channel.send("Reloading config!")
+        await global_channel.send("Reloading config!")
         globalVars.gConfig.open_conf()
 
 

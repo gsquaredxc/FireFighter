@@ -33,6 +33,14 @@ async def config(ctx, arg1, arg2):
         except ValueError:
             globalVars.gConfig.set_value(ctx.guild.id, arg1, arg2)
 
+@bot.command()
+async def base_config(ctx, arg1, arg2):
+    if has_admin_perms(ctx.author):
+        try:
+            globalVars.gConfig.set_value("baseConfig", arg1, int(arg2))
+        except ValueError:
+            globalVars.gConfig.set_value("baseConfig", arg1, arg2)
+
 
 @bot.command()
 async def save_conf(ctx):

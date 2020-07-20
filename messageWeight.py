@@ -1,11 +1,9 @@
 import datetime
 import os
 
-from configUtils import get_value
+import globalVars
 
 DEBUG = os.getenv("DEBUG") == "1"
-
-import config
 
 
 def message_weigher(message) -> int:
@@ -34,15 +32,16 @@ def user_weight(message) -> int:
 def ping_counter(message) -> int:
     mentions = len(message.mentions)
     role_mentions = len(message.role_mentions)
-    if mentions >= get_value(message.guild.id,"ping_spam_min"):
+    return_val = 0
+    if mentions >= globalVars.gConfig.get_value(message.guild.id,"ping_spam_min"):
         if DEBUG:
             print("PATH: PING_SPAM; MENTIONS: " + str(mentions))
-        return get_value(message.guild.id,"ping_spam_base") + (get_value(message.guild.id,"ping_spam_mult") * mentions)
-    if role_mentions >= get_value(message.guild.id,"role_spam_min"):
+        return_val += globalVars.gConfig.get_value(message.guild.id,"ping_spam_base") + (globalVars.gConfig.get_value(message.guild.id,"ping_spam_mult") * mentions)
+    if role_mentions >= globalVars.gConfig.get_value(message.guild.id,"role_spam_min"):
         if DEBUG:
             print("PATH: ROLE_SPAM; MENTIONS: " + str(role_mentions))
-        return get_value(message.guild.id,"role_spam_base") + (get_value(message.guild.id,"role_spam_mult") * role_mentions)
-    return 0
+        return_val += globalVars.gConfig.get_value(message.guild.id,"role_spam_base") + (globalVars.gConfig.get_value(message.guild.id,"role_spam_mult") * role_mentions)
+    return return_val
 
 
 def user_age_weight(message) -> int:
@@ -51,8 +50,8 @@ def user_age_weight(message) -> int:
     if DEBUG:
         print("USER_AGE: " + str(difference))
     if difference == 0:
-        return get_value(message.guild.id,"user_age_0")
-    elif difference < get_value(message.guild.id,"user_age_max"):
-        return get_value(message.guild.id,"user_age_mult") * (
-                get_value(message.guild.id,"user_age_max") - difference)
+        return globalVars.gConfig.get_value(message.guild.id,"user_age_0")
+    elif difference < globalVars.gConfig.get_value(message.guild.id,"user_age_max"):
+        return globalVars.gConfig.get_value(message.guild.id,"user_age_mult") * (
+                globalVars.gConfig.get_value(message.guild.id,"user_age_max") - difference)
     return 0

@@ -103,3 +103,21 @@ The maximum age that receives a penalty for being a young account
 **user_age_mult**
 
 What weight to give per day under the maximum age
+
+### Weight to subtract for users:
+
+**THESE SHOULD BE NEGATIVE VALUES**
+
+These usually suggest that an account has some time put into it, which reduces the chances of it being spam
+
+**user_hypesquad**
+
+What weight to subtract from user for being a part of hypesquad
+
+**user_accounts**
+
+What weight to subtract per linked accounts
+
+**user_nitro**
+
+What weight to subtract from user for purchasing nitro

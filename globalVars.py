@@ -31,7 +31,10 @@ gDefaultConf = {
         "spam_channel": 733890159103311933,
         "report_to_all": 25,
         "ping_spam_min": 3,
-        "role_spam_min": 3
+        "role_spam_min": 3,
+        "user_join_max": 5,
+        "user_join_mult": 1,
+        "user_join_0": 10
     }
 }
 

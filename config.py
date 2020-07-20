@@ -3,7 +3,7 @@ import json
 
 class Config:
 
-    def __init__(self,filename):
+    def __init__(self, filename):
         self.filename = filename
         self.conf = {}
 
@@ -11,10 +11,10 @@ class Config:
         try:
             with open(self.filename) as f:
                 self.conf = json.load(f)
-        except Exception as e: #should change this
+        except Exception as e:  # should change this
             print(e)
             if retry:
-                with open(self.filename,"a+") as a:
+                with open(self.filename, "a+") as a:
                     json.dump(default_config, a, indent=4)
                 self.open_conf(False)
 
@@ -22,12 +22,16 @@ class Config:
         with open(self.filename, "w") as f:
             json.dump(self.conf, f, indent=4)
 
-    def get_value(self,guildID, key,defaultConf="baseConfig"):
+    def get_value(self, guildID, key, defaultConf="baseConfig"):
         try:
             return self.conf[str(guildID)][key]
         except:
-            self.conf[str(guildID)][key] = self.conf[defaultConf][key]
-            return self.conf[defaultConf][key]
+            try:
+                self.conf[str(guildID)][key] = self.conf[defaultConf][key]
+            except:
+                self.conf[defaultConf][key] = None
+            finally:
+                return self.conf[defaultConf][key]
 
-    def set_value(self,guildID, key, value):
+    def set_value(self, guildID, key, value):
         self.conf[str(guildID)][key] = value
